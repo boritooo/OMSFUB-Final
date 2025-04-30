@@ -97,8 +97,11 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-DATABASES = ["default"] = dj_database_url.parse("postgresql://amsfub_master_user:n3GRm4av1oiazU0uFfS31jRn022jbvh6@dpg-d08rfu2dbo4c73e7rhtg-a.singapore-postgres.render.com/amsfub_master")
-
+DATABASES = {
+    "default": dj_database_url.parse(
+        "postgresql://amsfub_master_user:n3GRm4av1oiazU0uFfS31jRn022jbvh6@dpg-d08rfu2dbo4c73e7rhtg-a.singapore-postgres.render.com/amsfub_master"
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
