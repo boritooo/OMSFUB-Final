@@ -24,10 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-$rhb5$k#z7f$yey=n)eecvrk54h*a!c$3&7(#*ej84smka0bo5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 #ALLOWED_HOSTS = ['192.168.1.13', '127.0.0.1', '192.168.225.248', 'localhost']
-ALLOWED_HOSTS = ['omsfub-final.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOST").split(" ")
 
 # Application definition
 
@@ -97,11 +97,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-DATABASES = {
-    "default": dj_database_url.parse(
-        "postgresql://amsfub_master_user:n3GRm4av1oiazU0uFfS31jRn022jbvh6@dpg-d08rfu2dbo4c73e7rhtg-a.singapore-postgres.render.com/amsfub_master"
-    )
-}
+database_url = os.environ.get("DATABASE_URL")
+DATABASES["default"] = dj_database_url.parse(database_url)
 
 
 # Password validation
