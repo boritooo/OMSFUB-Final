@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect , get_object_or_404 # type: ignore
 from django.contrib.auth import authenticate, login # type: ignore
 from django.contrib.auth.models import User # type: ignore
 from .models import  PersonalInfo,Equipment, UserProfile,UserData, Employee, OrgChartList, TimeRecord,Attendance, Post, DailyTimeRecords,Schedule,History,Comlab,Availability,PositionDCS
-from .forms import  ListofstaffForm, OrgChartListForm, ListofstaffForms, TimeRecordForm, PostForm,Dtrc,SuperUserLoginForm,EquipmentForm
+from .forms import  ListofstaffForm, OrgChartListForm, SuperUserRegistrationForm, TimeRecordForm, PostForm,Dtrc,SuperUserLoginForm,EquipmentForm
 from django.contrib.auth.decorators import login_required # type: ignore
 from .models import Instructor, Ins_Schedule
 from .forms import ScheduleForm
@@ -184,6 +184,15 @@ def userEmpPhotos(request):
         'posts': posts, 'employee': employee,
     })
 
+def register_superuser(request):
+    if request.method == 'POST':
+        form = SuperUserRegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('landing_page')  # or wherever you want to go after registration
+    else:
+        form = SuperUserRegistrationForm()
+    return render(request, 'pages/register_superuser.html', {'form': form})
 
 @csrf_exempt
 def create_staff(request):

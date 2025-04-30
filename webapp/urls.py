@@ -15,6 +15,7 @@ urlpatterns = [
     path('schedule/', views.schedule, name='schedule'),
     path('position/', views.position, name='position'),
     path('Acomlab/edit/<int:pk>/', views.edit_comlab, name='edit_comlab'),
+    path('register-superuser/', views.register_superuser, name='register_superuser'),
 
     # path('edit/<int:id>/', views.edit_employee, name='edit_employee'),
     path('edit-employee/', views.edit_employee, name='edit_employee'),

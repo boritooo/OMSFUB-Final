@@ -1,7 +1,26 @@
 from django import forms # type: ignore
 from .models import Employee, OrgChartList, Post, UserData, Equipment, Availability, Comlab
 from .models import Ins_Schedule
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 import datetime  # Add this import
+
+
+class SuperUserRegistrationForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password1', 'password2')
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.is_staff = True
+        user.is_superuser = True
+        if commit:
+            user.save()
+        return user
 
 class Dtrc(forms.Form):
     image  = forms.ImageField(label='Profile Picture', required=False)
