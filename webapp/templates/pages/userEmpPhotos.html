@@ -1,0 +1,188 @@
+{% extends 'pages/index.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/userEmpPhotos.css' %}">
+<style>
+  /* Add background color and padding to the photo gallery container */
+  .photo-gallery {
+    max-width: 1210px;
+    margin: 2em auto;
+    margin-left: 250px;
+    padding: 1em;
+    background-color: #fff;  /* White background */
+    border-radius: 8px;      /* Optional: adds rounded corners */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* Optional: adds shadow to gallery */
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 items per row */
+    grid-gap: 1em;
+  }
+
+  .photo-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    cursor: pointer;
+    background: #fff;
+  }
+
+  .photo-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .photo-card:hover img {
+    transform: scale(1.07);
+  }
+
+  .photo-card .overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: .5em;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    font-size: .9rem;
+    line-height: 1.2;
+    max-height: 4.8em;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+
+  .photo-card:hover .overlay {
+    opacity: 1;
+  }
+
+  /* Lightbox modal */
+  .lightbox {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.8);
+    justify-content: center; align-items: center;
+  }
+
+  .lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  .lightbox .close {
+    position: absolute;
+    top: 2%;
+    right: 2%;
+    font-size: 2rem;
+    color: #fff;
+    cursor: pointer;
+  }
+</style>
+<link rel="stylesheet" href="{% static 'css/global.css' %}">
+<link rel="stylesheet" href="{% static 'css/userEmpPhotos.css' %}">
+<!--SIDEBAR-->
+<div class="sidebar">
+  <div class="logo">
+      <img src="{% static 'image/logoams.png' %}" height="50px" width="50px" alt="CVSU logo">
+      <h5>OMSUFB</h5>
+      <hr>
+  </div>
+<br><br><br><br>
+<div class="user-info">
+  {% if user.is_authenticated %}
+      <div class="profile-container-sidebar">
+          {% if employee.profile %}
+              <img src="{{ employee.profile.url }}" alt="Profile Picture" class="profile-pic">
+          {% else %}
+              <img src="{% static 'image/usericon.png' %}" alt="Default Profile Picture" class="profile-pic">
+          {% endif %}
+          <p class="user-name">{{ employee.first_name }}</p>
+      </div>
+  {% endif %}
+  <hr>
+</div>
+
+  <a href="{% url 'user_data' %}" {% if request.path == '/user_data/' %}class="active"{% endif %}><i class="fa-regular fa-newspaper"></i> <span class="navlink" > News</span></a>
+  <a href="{% url 'userEmpSched' %}" {% if request.resolver_match.url_name == 'userEmpSched' %}class="active"{% endif %}><i class="fa-regular fa-user"></i> <span class="navlink" > Profile</span></a>
+  <a href="{% url 'Icomlab' %}" {% if request.path == '/Icomlab/' %}class="active"{% endif %}><i class="fa-solid fa-computer"></i> <span class="navlink" > Comlab</span></a>
+  <a href="#" id="logoutButton" class="Logoutbtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Log out</span></a>
+</div>
+
+
+<!-- PROFILE SECTION -->
+<section id="Profile">
+  <div class="profile-container">
+    {% if employee.profile %}
+      <img src="{{ employee.profile.url }}" alt="Profile Picture" width="100" height="100">
+    {% else %}
+      <img src="{% static 'image/usericon.png' %}" alt="Default Profile Picture" width="100" height="100">
+    {% endif %}
+
+    <div class="profile-info">
+      <h2>{{ employee.first_name }} {{ employee.last_name }}</h2>
+    </div>
+
+  </div>
+</section>
+
+<!-- MENU TABS -->
+<div class="menu">
+  <a class="Post" href="{% url 'userEmp' %}"><i class="fa-solid fa-circle-info"></i> Info</a>
+  <a class="Schedule" href="{% url 'userEmpSched' %}"><i class="fa-solid fa-calendar-days"></i> Schedule</a>
+  <a class="Photos" href="{% url 'userEmpPhotos' %}" {% if request.resolver_match.url_name == 'userEmpPhotos' %}class="active"{% endif %}>
+    <i class="fa-regular fa-image"></i> <span class="navlink">Photos</span>
+  </a>
+  
+</div>
+<div class="photo-gallery">
+  {% if posts %}
+    <div class="gallery-grid">
+      {% for post in posts %}
+        {% if post.image %}
+        <div class="photo-card" onclick="openLightbox('{{ post.image.url }}')">
+          <img src="{{ post.image.url }}" alt="Photo {{ forloop.counter }}">
+          {% if post.body %}
+          <div class="overlay">{{ post.body|truncatechars:100 }}</div>
+          {% endif %}
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <p style="text-align: center; margin-top: 2em;">
+      <strong>No photos found in your posts.</strong>
+    </p>
+  {% endif %}
+</div>
+
+<!-- Lightbox Modal -->
+<div id="lightboxModal" class="lightbox" onclick="closeLightbox(event)">
+  <span class="close" onclick="closeLightbox(event)">&times;</span>
+  <img id="lightboxImage" src="" alt="Preview">
+</div>
+
+<script>
+  function openLightbox(src) {
+    const modal = document.getElementById('lightboxModal');
+    document.getElementById('lightboxImage').src = src;
+    modal.style.display = 'flex';
+  }
+
+  function closeLightbox(e) {
+    // only close if clicking on backdrop or close button, not on image
+    if (e.target.id === 'lightboxModal' || e.target.classList.contains('close')) {
+      e.preventDefault();
+      document.getElementById('lightboxModal').style.display = 'none';
+    }
+  }
+</script>
+{% endblock %}

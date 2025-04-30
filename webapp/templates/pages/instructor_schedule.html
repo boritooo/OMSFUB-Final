@@ -1,0 +1,101 @@
+{% extends 'pages/index.html' %}
+{% block content %}
+{% load static %}
+{% include 'pages/logout.html' %}
+
+<link rel="stylesheet" href="{% static 'css/instructor_schedule.css' %}">
+<link rel="stylesheet" href="{% static 'css/global.css' %}">
+
+<div class="sidebar">
+  <div class="logo">
+    <img src="{% static 'image/logoams.png' %}" height="50px" width="50px" alt="CVSU logo">
+    <h5>OMSUFB</h5>
+  </div>
+  <br><br>
+  <a href="{% url 'Apost' %}" {% if request.resolver_match.url_name == 'Apost' %}class="active"{% endif %}>News</a>
+  <a href="{% url 'main' %}" {% if request.path == '/main/' %}class="active"{% endif %}>Instructor</a>
+  <a href="{% url 'attendance' %}" {% if request.path == '/attendance/' %}class="active"{% endif %}>Attendance</a>
+  <a href="{% url 'schedule' %}" {% if request.path == '/schedule/' %}class="active"{% endif %}>Schedule</a>
+  <a href="{% url 'dtrm' %}" {% if request.path == '/dtrm/' %}class="active"{% endif %}>DTR</a>
+  <a href="{% url 'Acomlab' %}" {% if request.path == '/Acomlab/' %}class="active"{% endif %}>Comlab</a>  
+  <a href="#" id="logoutButton">Log out</a> <!-- Updated to trigger modal instead of redirect -->
+</div>
+
+<div class="marg marg2">
+  <h1>Schedule for {{ employee.first_name }} {{ employee.last_name }}</h1>
+</div>
+
+<div class="marg table-container">
+  <table class="employee-table">
+    <thead>
+      <tr>
+        <th>Subject Code</th> <!-- Add subject code field -->
+        <th>Subject</th>
+        <th>Section</th>
+        <th>Days</th>
+        <th>Time</th>
+        <th>Room</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for schedule in schedules %}
+        <tr>
+          <td>{{ schedule.subject_code }}</td> <!-- Add subject code field -->
+          <td>{{ schedule.subject }}</td>
+          <td>{{ schedule.section }}</td>
+          <td>{{ schedule.days }}</td>  <!-- Display the concatenated string of days -->
+          <td>{{ schedule.time|date:"h:i A" }} - {{ schedule.end_time|date:"h:i A" }}</td>
+          <td>{{ schedule.room }}</td>
+          <td>
+            <form class="dlt" method="post" action="{% url 'delete_schedule' schedule.id %}" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" onclick="return confirm('Are you sure you want to delete this schedule?')">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table> 
+</div>
+
+<div class="marg">
+  <form method="post">
+    {% csrf_token %}
+    <h2>Add New Schedule</h2>
+    <div class="form-grid">
+      <div class="form-group">
+        {{ form.subject_code.label_tag }}
+        {{ form.subject_code }}
+      </div>
+      <div class="form-group">
+        {{ form.subject.label_tag }}
+        {{ form.subject }}
+      </div>
+      <div class="form-group">
+        {{ form.section.label_tag }}
+        {{ form.section }}
+      </div>
+      <div class="form-group">
+        {{ form.days.label_tag }}
+        {{ form.days }}
+      </div>
+      <div class="form-group">
+        {{ form.time.label_tag }}
+        {{ form.time }}
+      </div>
+      <div class="form-group">
+        {{ form.end_time.label_tag }}
+        {{ form.end_time }}
+      </div>
+      <div class="form-group full-width">
+        {{ form.room.label_tag }}
+        {{ form.room }}
+      </div>
+    </div>
+    <button type="submit">Add Schedule</button>
+  </form>
+  
+</div>
+
+{% endblock %}

@@ -1,0 +1,184 @@
+{% extends 'pages/index.html' %}
+{% load static %}
+{% block content %}
+{% include 'pages/logout.html' %}
+<link rel="stylesheet" href="{% static 'css/global.css' %}">
+<link rel="stylesheet" href="{% static 'css/comlab.css' %}">
+
+<div class="sidebar">
+    <div class="logo">
+        <img src="{% static 'image/logoams.png' %}" height="50px" width="50px" alt="CVSU logo">
+        <h5>OMSUFB</h5>
+    </div>
+    <br><br><br><br>
+    <a href="{% url 'Apost' %}" {% if request.path == '/Apost/' %}class="active"{% endif %}>News</a>
+    <a href="{% url 'main' %}" {% if request.path == '/main/' %}class="active"{% endif %}>Instructor</a>
+    <a href="{% url 'attendance' %}" {% if request.path == '/attendance/' %}class="active"{% endif %}>Attendance</a>
+    <a href="{% url 'schedule' %}" {% if request.path == '/schedule/' %}class="active"{% endif %}>Schedule</a>
+    <a href="{% url 'dtrm' %}" {% if request.path == '/dtrm/' %}class="active"{% endif %}>DTR</a>
+    <a href="{% url 'Acomlab' %}" {% if request.resolver_match.url_name == 'Acomlab' %}class="active"{% endif %}>Comlab</a>
+    <a href="#" id="logoutButton">Log out</a>
+</div>
+<style>
+    .zoom-preview img {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    border-radius: 10px;
+}
+
+</style>
+
+<body>
+    <div class="card-container">
+        {% for cl in cl %}
+    {% if request.resolver_match.url_name == 'main' %}
+        <!-- Instructor Page: Only preview -->
+        <div class="cards"onclick="openPreviewModal({{ cl.id }})"style="cursor: pointer;">
+            <img src="{% static 'image/comlab.jpg' %}" alt="Thumbnail"
+                 style="object-fit: cover; height: 100px; width: 100%; border-radius: 10px;">
+            <h6 style="text-align: center;">{{ cl.comlab }}</h6>
+        </div>
+    {% else %}
+        <!-- Admin Page: Preview on click, edit on double click -->
+        <div class="cards"onclick="handleClick(event, {{ cl.id }})"ondblclick="openEditModal(event, {{ cl.id }})"style="cursor: pointer;">
+            <img src="{% static 'image/comlab.jpg' %}" alt="Thumbnail"
+                 style="object-fit: cover; height: 150px; width: 100%; border-radius: 10px;">
+            <h6 style="text-align: center;">{{ cl.comlab }}</h6>
+        </div>
+    {% endif %}
+
+    <!-- Shared Preview Modal -->
+    <div class="modal fade" id="previewModal{{ cl.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content custom-modal-content">
+                <img src="{% if cl.cards %}{{ cl.cards.url }}{% else %}{% static 'image/comlab.jpg' %}{% endif %}" class="img-fluid" alt="Full Image">
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal (Only shows up where editing is allowed) -->
+    {% if request.resolver_match.url_name != 'main' %}
+    <div class="modal fade" id="editModal{{ cl.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ cl.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form method="POST" action="{% url 'edit_comlab' cl.id %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Comlab</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="{% if cl.cards %}{{ cl.cards.url }}{% else %}{% static 'image/comlab.jpg' %}{% endif %}" class="img-fluid mb-2 rounded">
+                        <input type="text" name="comlab" class="form-control" value="{{ cl.comlab }}" required>
+                        <label class="mt-2">Upload New Image</label>
+                        <input type="file" name="cards" class="form-control">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+        {% endfor %}
+
+            <!-- Add Button Modal Trigger -->
+    <div class="bttn_E">
+<button type="button" data-bs-toggle="modal" data-bs-target="#addModal"> + Equipment</button>
+</div>
+
+<!-- Add Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Equipment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- The form goes here -->
+                <form method="POST" action="{% url 'Acomlab' %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}  <!-- Render the form fields -->
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Table to display equipment -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Equipment</th>
+            <th>Status</th> <!-- New column -->
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for eq in eq %}
+        <tr>
+            <td>{{ eq.name }}</td>
+            <td>{{ eq.date|date:"Y-m-d" }}</td>
+            <td>{{ eq.date|time:"h:i A" }}</td>
+            <td>{{ eq.equipment }}</td>
+            <td>
+                {% if eq.status == "returned" %}
+                    <span style="color: green;">Returned</span>
+                {% else %}
+                    <span style="color: red;">Borrowed</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if eq.status == "returned" %}
+                    <span style="color: green;">Returned</span>
+                {% else %}
+                    <form method="POST" action="{% url 'mark_returned' eq.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-sm" style="padding: 2px 6px; font-size: 12px;">Returned</button>
+                    </form>
+                {% endif %}
+            </td>
+            
+            
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+        </div>
+    </div>
+</body>
+<script>
+    let clickTimer = null;
+    
+    // Shared preview modal for all pages
+    function openPreviewModal(id) {
+        const modal = new bootstrap.Modal(document.getElementById('previewModal' + id));
+        modal.show();
+    }
+    
+    // Used only in admin/editing pages
+    function handleClick(event, id) {
+        if (clickTimer) return;
+        clickTimer = setTimeout(() => {
+            clickTimer = null;
+            openPreviewModal(id);
+        }, 200);
+    }
+    
+    function openEditModal(event, id) {
+        clearTimeout(clickTimer);
+        clickTimer = null;
+        const modal = new bootstrap.Modal(document.getElementById('editModal' + id));
+        modal.show();
+    }
+    </script>
+    
+    
+    
+
+{% endblock %}

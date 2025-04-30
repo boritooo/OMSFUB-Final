@@ -1,0 +1,145 @@
+{% extends 'pages/index.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'pages/logout.html' %}
+<link rel="stylesheet" href="{% static 'css/global.css' %}">
+<link rel="stylesheet" href="{% static 'css/adminPost.css' %}">
+
+<div class="sidebar">
+    <div class="logo">
+        <img src="{% static 'image/logoams.png' %}" height="50px" width="50px" alt="CVSU logo">
+        <h5>OMSUFB</h5>
+    </div>
+    <br><br><br><br>
+
+    <a href="{% url 'Apost' %}" {% if request.resolver_match.url_name == 'Apost' %}class="active"{% endif %}>News</a>
+    <a href="{% url 'main' %}" {% if request.resolver_match.url_name == 'main' %}class="active"{% endif %}>Instructor</a>
+    <a href="{% url 'attendance' %}" {% if request.resolver_match.url_name == 'attendance' %}class="active"{% endif %}>Attendance</a>
+    <a href="{% url 'schedule' %}" {% if request.resolver_match.url_name == 'schedule' %}class="active"{% endif %}>Schedule</a>
+    <a href="{% url 'dtrm' %}" {% if request.resolver_match.url_name == 'dtrm' %}class="active"{% endif %}>DTR</a>
+    <a href="{% url 'Acomlab' %}" {% if request.resolver_match.url_name == 'Acomlab' %}class="active"{% endif %}>Comlab</a>
+    <a href="#" id="logoutButton">Log out</a>
+</div>
+
+<div class="box">
+    <div class="pt profile-section">
+        <div class="profile-container">
+            <img src="{% static 'image/logoams.png' %}" alt="Default Profile Picture" width="100" height="100">
+            <button class="buttonC" onclick="toggleCreatePost()">Create Post</button>
+        </div>
+        <hr>
+    </div>
+
+    <!-- Create Post Section -->
+    <div class="create-post-section" id="createPostSection" style="display: none;">
+        <form id="createPostForm" action="{% url 'Apost' %}" method="post" enctype="multipart/form-data" onsubmit="return validatePost()">
+            {% csrf_token %}
+            <textarea id="body" name="body" placeholder="What's on your mind?" rows="4"></textarea>
+            <div class="post-options">
+                <label for="image-upload" id="imageLabel" aria-label="Add Photo">
+                    <i class="fas fa-image"></i> Add Photo
+                </label>
+                <input type="file" id="image-upload" name="image" style="display: none;" onchange="updateFileName()">
+            </div>
+            <div class="create-post-actions">
+                <button type="submit">Post</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Posts list -->
+    <ul>
+        {% if posts %}
+            {% for post in posts %}
+            <div class="cons">
+                <div class="post-content">
+                    <div class="post-header">
+                        <div class="author-profile-wrapper" style="position: relative; display: inline-block;">
+                            {% if post.author.profile %}
+                                <img src="{{ post.author.profile.url }}" alt="Author's Profile Picture" class="post-author-pic" onmouseover="showUserInfo(this)" onmouseout="hideUserInfo(this)">
+                            {% else %}
+                                <img src="{% static 'image/usericon.png' %}" alt="Default Profile Picture" class="post-author-pic" onmouseover="showUserInfo(this)" onmouseout="hideUserInfo(this)">
+                            {% endif %}
+
+                            <!-- User info popup -->
+                            <div class="user-info-popup" style="display: none; position: absolute; top: 60px; left: 0; background: white; padding: 10px; border: 1px solid #ccc; border-radius: 8px; z-index: 999; width: 200px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                                <strong><i class="fa-solid fa-user"></i>&nbsp;&nbsp;&nbsp;{{ post.author.first_name }} {{ post.author.last_name }}</strong><br>
+                                <small><i class="fa-solid fa-cake-candles">&nbsp;&nbsp;&nbsp;&nbsp;</i>{{ post.author.age }}</small><br> 
+                                <small><i class="fa-solid fa-users"></i>&nbsp;&nbsp;&nbsp;{{ post.author.position }}</small><br>
+                                <small><i class="fa-solid fa-sitemap"></i>&nbsp;&nbsp;&nbsp;{{ post.author.organization}}</small>
+                            </div>
+                        </div>
+                        <strong>{{ post.author.first_name }}</strong> <br>
+                        <span>{{ post.created_at }}</span><br>
+                    </div>
+                    <div class="post-body" id="postBody-{{ post.id }}">
+                        <p>{{ post.body }}</p>
+                    </div>                    
+                    {% if post.image %}
+                        <div class="post-container">
+                            <a href="{{ post.image.url }}" target="_blank">
+                                <img src="{{ post.image.url }}" alt="Post Image" class="post-image">
+                            </a>
+                        </div>
+                    {% endif %}
+                    <br>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-posts-message">
+                <p>No posts available. Be the first to share something!</p>
+            </div>
+        {% endif %}
+    </ul>
+</div>
+
+
+<script>
+    function toggleCreatePost() {
+        const createPostSection = document.getElementById('createPostSection');
+        createPostSection.style.display = createPostSection.style.display === 'none' || createPostSection.style.display === '' ? 'block' : 'none';
+    }
+
+    function validatePost() {
+        const body = document.getElementById('body').value.trim();
+        const image = document.getElementById('image-upload').files.length;
+
+        if (!body && image === 0) {
+            alert("Please add text or a photo before posting.");
+            return false;
+        }
+        return true; 
+    }
+
+      // Show user info on hover
+      function showUserInfo(imgElement) {
+        const popup = imgElement.parentElement.querySelector('.user-info-popup');
+        if (popup) {
+            popup.style.display = 'block';
+        }
+    }
+
+    // Hide user info on mouse out
+    function hideUserInfo(imgElement) {
+        const popup = imgElement.parentElement.querySelector('.user-info-popup');
+        if (popup) {
+            popup.style.display = 'none';
+        }
+    }
+
+    function updateFileName() {
+        const fileInput = document.getElementById('image-upload');
+        const label = document.getElementById('imageLabel');
+
+        if (fileInput.files.length > 0) {
+            const fileName = fileInput.files[0].name;
+            label.innerHTML = `<i class="fas fa-image"></i> ${fileName}`;
+        } else {
+            label.innerHTML = `<i class="fas fa-image"></i> Add Photo`;
+        }
+    }
+</script>
+
+{% endblock %}
