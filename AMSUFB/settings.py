@@ -24,10 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-$rhb5$k#z7f$yey=n)eecvrk54h*a!c$3&7(#*ej84smka0bo5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+DEBUG = True
 
 #ALLOWED_HOSTS = ['192.168.1.13', '127.0.0.1', '192.168.225.248', 'localhost']
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOST", "localhost 127.0.0.1").split()
+ALLOWED_HOSTS = ['omsfub-final.onrender.com', 'localhost', '127.0.0.1']
 
 # Application definition
 
@@ -97,24 +97,9 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-DATABASE_URL = os.environ.get("DATABASE_URL", None)
-
-if DATABASE_URL:
-    DATABASES = {
-        "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
-    }
-else:
-    print("⚠️ WARNING: DATABASE_URL not found. Falling back to SQLite.")
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+DATABASES = ["default"] = dj_database_url.parse("postgresql://amsfub_master_user:n3GRm4av1oiazU0uFfS31jRn022jbvh6@dpg-d08rfu2dbo4c73e7rhtg-a.singapore-postgres.render.com/amsfub_master")
 
 
-
-    
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
