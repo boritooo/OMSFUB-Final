@@ -157,7 +157,7 @@
     <ul>
       <li>
         {% if chairperson %}
-          <a href="javascript:void(0);" onclick="openPopup('{{ chairperson.profile.url }}', '{{ chairperson.first_name }} {{ chairperson.last_name }}', '{{ chairperson.organization }}')">
+          <a href="javascript:void(0);" onclick="openPopup('{{ chairperson.first_name }} {{ chairperson.last_name }}', '{{ chairperson.organization }}')">
             <img src="{{ chairperson.profile.url }}" alt="{{ chairperson.first_name }}">
             <span>
               {{ chairperson.first_name }} {{ chairperson.last_name }}<br>
