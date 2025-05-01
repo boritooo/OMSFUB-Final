@@ -15,7 +15,7 @@
 #define VERIFY_MODE_LED D6
 #define ACTIVE_MODE_LED D7
 
-const char* server_url = "http://192.168.100.82:8000";
+const char* server_url = "https://omsfub-final.onrender.com";
 const char* is_active_api = "/fingerprint/is_active";
 const char* mode_api = "/fingerprint/mode";
 const char* enroll_api = "/fingerprint/enroll";
