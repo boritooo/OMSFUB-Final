@@ -1,0 +1,248 @@
+{% extends 'pages/index.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+<link rel="stylesheet" type="text/css" href="{% static 'css/landingpage.css' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<style>
+    
+    *{
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    body
+    {
+        height: 100%;
+        align-items: center;
+        background: #f5f5f5;
+        width: 100%;
+        max-width: 100%;
+    }
+    h1{
+        margin-top: 20px;
+        font-size: 5vh;
+        text-align: center;
+    }
+    .tree
+    {
+        margin-top: 10vh;
+        width: 100%;
+        height: auto;
+        text-align:center;
+    }
+
+    .tree ul
+    {
+        padding-top: 20px;
+        position: relative;
+        transform: .5s;
+    }
+
+    .tree li
+    {
+        display: inline-table;
+        text-align: center;
+        list-style-type: none;
+        position: inherit;
+        padding: 0px;
+        margin: 0px 0px 0px 0px;
+ 
+    } 
+    .IT{
+        margin-top: 20px    ;
+        margin-right:100px;
+    }
+    .CS{
+        margin-top: 20px;      
+    }
+    
+    .sub-Class-IT {
+        margin: 20px 0px 0px 5px;
+    }
+    .sub-Class-CS{
+        margin: 20px 0px 0px 5px;
+    }
+    
+
+    .tree li:before, .tree li:after 
+    {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 50%;
+        border-top: 1px solid #ccc;
+        width: 20%;
+        height: 10px;
+    }
+
+    .tree li:after 
+    {
+        right: auto;
+        left: 50%;
+        border-left: 1px solid #ccc;
+    }
+
+    .tree li:only-child:after, .tree li :only-child:before
+    {
+        display: none;
+    } 
+    
+    .tree li:only-child
+    {
+        padding-top: 0;
+    }
+
+    .tree li:first-child:before,  .tree li:last-child:after
+    {
+        border: 0 none;
+    }
+
+    .tree li:last-child:before
+    {
+       border-right: 1px solid #ccc;
+       border-radius: 0px 5px 0px 0px; 
+    }
+
+    .tree li:first-child:after
+    {
+       border-radius: 5px 0px 0px 0px; 
+    }
+
+    .tree ul ul:before
+    {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        border-left: 1px solid #ccc;
+        width: 0;
+        height: 20px;
+    }
+
+    .tree a
+    {
+        border: 1px solid #ccc;
+        padding: 0px;
+        display: inline-grid;
+        border-radius: 5px;
+        transition: 5px;
+    }
+
+    .tree a img
+    {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 10px !important;
+        border-radius: 100px;
+        margin: auto;
+    }
+
+    .tree a span
+    {
+        border:1px solid #ccc;
+        border-radius: 5px;
+        color: #666;
+        padding: 8px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 500;
+    }
+
+    /* hover section */
+
+    .tree li a:hover, .tree li a:hover img, .tree li a:hover span, .tree li a:hover+ul li a
+    {
+        background: #c8e4f8;
+        color: #000;
+        border: 1px solid #94a0b4;
+        box-shadow: 0px 0px 8px -5px #5f5f5f;
+    }
+
+    .tree li a:hover+ul li:after, .tree li a:hover+ul li:before, .tree li a:hover+ul li:before, .tree li a:hover+ul li:before
+    {
+        border-color: #94a0b4;
+
+    }
+
+    /* Custom Dropdown Styles */
+.dropdown-menu {
+    color: black; /* Font color */
+    background-color: #4CAF50; /* Background color */
+}
+
+.dropdown-menu a:hover {
+    background-color: #8BC34A; /* Hover background color */
+}
+
+.dropdown button
+{
+    background-color: #316cff;
+    margin-left: 15px;
+    padding-right:45px;
+}
+
+.dropdown button:hover
+{
+    background-color: #002b97;
+}
+</style>
+
+<nav class="navbar">
+    <div class="logo">
+      <img src="{% static 'image/fingerprint-scan.png' %}" alt="logo">
+      <h3>OMSUFB</h3>
+    </div>
+    <div class="nav-links">
+    <a href="{% url 'landing_page' %}">Get Back</a>
+    <a href="{% url 'news' %}">News</a>
+          <a href="{%url 'studorg' %}">Org Chart</a>
+          <a href="{% url 'status' %}">Status</a>
+        </div>
+    </div>
+    </div>
+    <div class="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    </nav>
+
+<body>
+    <h1>Organizational Chart</h1>
+
+    <div class="tree">
+        <ul>
+            <li><a href="" class="head"><img src="{% static 'image/usericon.png'%}" alt=""><span>Chairperson, DCS </span></a>
+                <ul>
+
+                    <li><a href="" class="IT"><img src="{% static 'image/usericon.png'%}" alt="" ><span>Program Chair, IT </span></a>
+                        <ul>
+                            <li><a href="" class="sub-Class-IT"><img src="{% static 'image/usericon.png'%}" alt=""><span>Instructors </span></a></li>
+                            <li><a href="" class="sub-Class-IT"><img src="{% static 'image/usericon.png'%}" alt=""><span>Instructors </span></a></li>
+                            <li><a href="" class="sub-Class-IT"><img src="{% static 'image/usericon.png'%}" alt=""><span>Instructors </span></a></li>
+                            <li><a href="" class="sub-Class-IT"><img src="{% static 'image/usericon.png'%}" alt=""><span>Instructors </span></a></li>
+                            <li><a href="" class="sub-Class-IT"><img src="{% static 'image/usericon.png'%}" alt=""><span>Instructors </span></a></li>
+                    
+                        </ul>
+                    </li>
+
+                    <li><a href="" class="CS"><img src="{% static 'image/usericon.png'%}" alt="" ><span>Program Chair, CS </span></a>
+                        <ul>
+                            <li><a href="" class="sub-Class-CS"><img src="{% static 'image/usericon.png'%}" alt=""><span>Instructors </span></a></li>
+                            <li><a href="" class="sub-Class-CS"><img src="{% static 'image/usericon.png'%}" alt=""><span>Instructors </span></a></li>
+                            <li><a href="" class="sub-Class-CS"><img src="{% static 'image/usericon.png'%}" alt=""><span>Instructors </span></a></li>
+                            <li><a href="" class="sub-Class-CS"><img src="{% static 'image/usericon.png'%}" alt=""><span>Instructors </span></a></li>
+                            <li><a href="" class="sub-Class-CS"><img src="{% static 'image/usericon.png'%}" alt=""><span>Instructors </span></a></li>
+                            <li><a href="" class="sub-Class-CS"><img src="{% static 'image/usericon.png'%}" alt=""><span>Instructors </span></a></li>
+                        </ul></li>
+                    
+                </ul>
+            </li>
+        </ul>
+    </div>
+</body>
+{% endblock %}

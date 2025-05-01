@@ -1,0 +1,410 @@
+{% extends 'pages/index.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'pages/logout.html' %}
+<link rel="stylesheet" href="{% static 'css/global.css' %}">
+<link rel="stylesheet" href="{% static 'css/userEmp.css' %}">
+
+<style>
+  .instructor-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    padding: 2em;
+    margin-top: 1.5em;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+    margin-left: 250px;
+    color: #333;
+  }
+
+  .instructor-info h3 {
+    grid-column: span 2;
+    font-size: 2rem;
+    margin-bottom: 1em;
+    color: #0a7013;
+    text-align: center;
+  }
+
+  .instructor-info .info-item {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: inset 2px 2px 5px #e3e3e3, inset -2px -2px 5px #ffffff;
+  }
+
+  .instructor-info .info-item h4 {
+    margin-bottom: 10px;
+    color: #555;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .instructor-info .info-item p {
+    font-size: 1.1rem;
+    color: #222;
+    margin: 0;
+    line-height: 1.6;
+  }
+  
+
+  .menu{
+      max-width: 1210px;
+      display: flex;
+      align-items: center;
+      background-color: rgb(255, 255, 255);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+      max-width: 1210px;
+      margin-top: 0px;
+      margin-left: 250px;
+      position: relative;
+      border-top: 1px solid rgba(172, 169, 169, 0.648);
+      padding-top: 10px;
+      padding-bottom: 15px;
+    }
+
+    .menu a {
+      text-decoration: none;
+      color: #333;    
+      margin-right: 15px;
+    }
+    
+
+.Logoutbtn span{
+  font-size: 20px;
+}
+
+
+a span.navlink {
+  font-size: 20px;
+  
+}
+
+span{
+  font-size: 10px;
+}
+
+a.Post{
+  color: #08ad2f;
+  text-decoration: underline 3px;
+}
+
+a.Post{
+  margin-left: 30px;
+}
+
+  .modal-content {
+    background-color: #fff;
+    padding: 2em;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    max-height: 90vh; /* Ensure the modal doesn't overflow vertically */
+    overflow-y: auto; /* Add scrolling if content exceeds height */
+}
+
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 10px; /* Add padding for small screens */
+}
+
+/* Ensure the modal fits within the screen */
+@media screen and (max-width: 600px) {
+    .modal-content {
+        width: 95%;  /* Make the modal smaller on mobile */
+        padding: 1.5em;
+    }
+
+    .modal-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .modal-content input,
+    .modal-content textarea {
+        font-size: 0.9rem;
+    }
+
+    .modal-content button {
+        font-size: 1rem;
+        padding: 10px 15px;
+    }
+}
+
+
+  .modal-content h2 {
+    margin-top: 0;
+    font-size: 1.8rem;
+    color: #333;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+
+  .modal-content .close:hover {
+    color: #f44336;
+  }
+
+  .modal-content form {
+    display: grid;
+    grid-gap: 1.2em;
+    grid-template-columns: 1fr;
+  }
+
+  .modal-content label {
+    font-weight: bold;
+    color: #555;
+  }
+
+  .modal-content input, .modal-content textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+
+  .modal-content input:focus, .modal-content textarea:focus {
+    border-color: #4caf50;
+    outline: none;
+  }
+
+  .modal-content textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .modal-content button {
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .modal-content button:hover {
+    background-color: #45a049;
+  }
+
+  /* Animation for modal */
+  .modal.show {
+    display: flex;
+  }
+</style>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo">
+    <img src="{% static 'image/logoams.png' %}" height="50px" width="50px" alt="CVSU logo">
+    <h5>OMSUFB</h5>
+    <hr>
+  </div>
+  <br><br><br><br>
+  <div class="user-info">
+    {% if user.is_authenticated %}
+      <div class="profile-container-sidebar">
+        {% if employee.profile %}
+          <img src="{{ employee.profile.url }}" alt="Profile Picture" class="profile-pic">
+        {% else %}
+          <img src="{% static 'image/usericon.png' %}" alt="Default Profile Picture" class="profile-pic">
+        {% endif %}
+        <p class="user-name">{{ employee.first_name }}</p>
+      </div>
+    {% endif %}
+    <hr>
+  </div>
+
+  <a href="{% url 'user_data' %}" {% if request.path == '/user_data/' %}class="active"{% endif %}><i class="fa-regular fa-newspaper"></i> <span class="navlink">News</span></a>
+  <a href="{% url 'userEmp' %}" {% if request.resolver_match.url_name == 'userEmp' %}class="active"{% endif %}><i class="fa-regular fa-user"></i> <span class="navlink">Profile</span></a>
+  <a href="{% url 'Icomlab' %}" {% if request.path == '/Icomlab/' %}class="active"{% endif %}><i class="fa-solid fa-computer"></i> <span class="navlink">Comlab</span></a>
+  <a href="#" id="logoutButton" class="Logoutbtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Log out</span></a>
+</div>
+
+<!-- PROFILE SECTION -->
+<section id="Profile">
+  <div class="profile-container">
+    {% if employee.profile %}
+      <img src="{{ employee.profile.url }}" alt="Profile Picture" width="100" height="100">
+    {% else %}
+      <img src="{% static 'image/usericon.png' %}" alt="Default Profile Picture" width="100" height="100">
+    {% endif %}
+
+    <div class="profile-info">
+      <h2>{{ employee.first_name }} {{ employee.last_name }}</h2>
+    </div>
+
+    <div class="button-container">
+      <button class="edit"><a href="#">Edit info</a> <i class="fa-solid fa-pen"></i></button>
+    </div>
+  </div>
+</section>
+
+<!-- MENU TABS -->
+<div class="menu">
+  <a class="Post" href="{% url 'userEmp' %}"><i class="fa-solid fa-circle-info"></i> Info</a>
+  <a class="Schedule" href="{% url 'userEmpSched' %}"><i class="fa-solid fa-calendar-days"></i> Schedule</a>
+  <a class="Photos" href="{% url 'userEmpPhotos' %}" {% if request.resolver_match.url_name == 'userEmpPhotos' %}class="active"{% endif %}>
+    <i class="fa-regular fa-image"></i> <span class="navlink">Photos</span>
+  </a>
+  
+</div>
+
+<!-- PERSONAL INFO TABLE -->
+<div class="instructor-info">
+  <h3>Personal Information</h3>
+
+  {% if personal_info %}
+    <div class="info-item">
+      <h4>Full Name</h4>
+      <p>{{ personal_info.full_name }}</p>
+    </div>
+    <div class="info-item">
+      <h4>Address</h4>
+      <p>{{ personal_info.address }}</p>
+    </div>
+    <div class="info-item">
+      <h4>Date of Birth</h4>
+      <p>{{ personal_info.birthday|date:"F d, Y" }}</p>
+    </div>
+    <div class="info-item">
+      <h4>Age</h4>
+      <p>{{ personal_info.age }}</p>
+    </div>
+    <div class="info-item">
+      <h4>Contact Number</h4>
+      <p>{{ personal_info.contact_number }}</p>
+    </div>
+    <div class="info-item">
+      <h4>Email</h4>
+      <p>{{ personal_info.email }}</p>
+    </div>
+    <div class="info-item">
+      <h4>Position</h4>
+      <p>{{ personal_info.position }}</p>
+    </div>
+    <div class="info-item">
+      <h4>Working Experience</h4>
+      <p>{{ personal_info.experience }}</p>
+    </div>
+    <div class="info-item">
+      <h4>Education</h4>
+      <p>{{ personal_info.education }}</p>
+    </div>
+    <div class="info-item" style="grid-column: span 2;">
+      <h4>Skills</h4>
+      <p>{{ personal_info.skills }}</p>
+    </div>
+  {% else %}
+    <div style="grid-column: span 2; text-align: center;">
+      <p><strong>No personal information found.</strong></p>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Edit Info Modal -->
+<div id="editInfoModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Edit Info</h2>
+    <form method="POST" action="{% url 'userEmp' %}">
+      {% csrf_token %}
+      
+      <label for="full_name">Full Name:</label>
+      <input type="text" name="full_name" value="{{ personal_info.full_name }}" required>
+
+      <label for="address">Address:</label>
+      <input type="text" name="address" value="{{ personal_info.address }}">
+
+      <label for="birthday">Birthday:</label>
+      <input type="date" name="birthday" value="{{ personal_info.birthday|date:'Y-m-d' }}">
+
+      <label for="age">Age:</label>
+      <input type="number" name="age" value="{{ personal_info.age }}">
+
+      <label for="contact_number">Contact Number:</label>
+      <input type="text" name="contact_number" value="{{ personal_info.contact_number }}">
+
+      <label for="email">Email:</label>
+      <input type="email" name="email" value="{{ personal_info.email }}">
+
+      <label for="position">Position:</label>
+      <input type="text" name="position" value="{{ personal_info.position }}">
+
+      <label for="experience">Experience:</label>
+      <textarea name="experience">{{ personal_info.experience }}</textarea>
+
+      <label for="education">Education:</label>
+      <textarea name="education">{{ personal_info.education }}</textarea>
+
+      <label for="skills">Skills:</label>
+      <textarea name="skills">{{ personal_info.skills }}</textarea>
+
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var userNameElements = document.querySelectorAll('.user-info .user-name');
+    userNameElements.forEach(function(element) {
+      element.textContent = element.textContent.replace(/\./g, ' ');
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById("editInfoModal");
+  const btn = document.querySelector(".edit"); // Now selects the entire button container
+  const span = document.querySelector(".close");
+
+  // Show modal when "Edit info" button is clicked
+  btn.addEventListener('click', function (e) {
+    e.preventDefault();  // Prevent any default behavior of the button
+    modal.classList.add('show');  // Display the modal
+  });
+
+  // Close the modal when the close button (X) is clicked
+  span.addEventListener('click', function () {
+    modal.classList.remove('show');  // Hide the modal
+  });
+
+  // Close the modal when clicking outside of it
+  window.addEventListener('click', function (event) {
+    if (event.target == modal) {
+      modal.classList.remove('show');  // Hide modal when clicking outside
+    }
+  });
+});
+
+
+</script>
+{% endblock %}

@@ -1,0 +1,150 @@
+{% extends 'pages/index.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'pages/logout.html' %}
+<link rel="stylesheet" href="{% static 'css/global.css' %}">
+<link rel="stylesheet" href="{% static 'css/attendance.css' %}">
+
+<div class="sidebar">
+  <div class="logo">
+    <img src="{% static 'image/logoams.png' %}" height="50px" width="50px" alt="CVSU logo">
+    <h5>OMSUFB</h5>
+  </div>
+  <br><br><br><br>  
+
+  <a href="{% url 'Apost' %}" {% if request.resolver_match.url_name == 'Apost' %}class="active"{% endif %}>News</a>
+  <a href="{% url 'main' %}" {% if request.path == '/main/' %}class="active"{% endif %}>Instructor</a>
+  <a href="{% url 'attendance' %}" {% if request.path == '/attendance/' %}class="active"{% endif %}>Attendance</a>
+  <a href="{% url 'schedule' %}" {% if request.path == '/schedule/' %}class="active"{% endif %}>Schedule</a>
+  <a href="{% url 'dtrm' %}" {% if request.path == '/dtrm/' %}class="active"{% endif %}>DTR</a>
+  <a href="{% url 'Acomlab' %}" {% if request.path == '/Acomlab/' %}class="active"{% endif %}>Comlab</a>
+  <a href="#" id="logoutButton">Log out</a>
+</div>
+
+<section id="Attendance">
+  <div class="content-at">
+
+    <div class="clock-frame">
+      <div class="clock" id="clock"></div>
+      <div class="date" id="date">Loading...</div>
+    </div>
+
+    <!-- 🔍 Search Bar -->
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search...">
+    </div>
+
+    <!-- 📝 Table and No Results Message -->
+    <div id="tableContainer">
+      <table class="table-striped table-bordered table-responsive custom-table" id="attendanceTable">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Username</th>
+            <th>Date</th>
+            <th>Time In</th>
+            <th>Time Out</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% regroup At by date as date_list %}
+          {% for date_group in date_list %}
+            <!-- 📅 Date Separator -->
+            <tr class="date-separator">
+              <td colspan="6" style="background-color: #dff8d7; text-align:center; font-weight:bold;">
+                {{ date_group.grouper }}
+              </td>
+            </tr>
+
+            {% for item in date_group.list %}
+            <tr>
+              <td>{{ item.IdNum }}</td>
+              <td>{{ item.first_name }} {{ item.last_name }}</td>
+              <td>{{ item.date }}</td>
+              <td>{{ item.time_in }}</td>
+              <td>{{ item.time_out }}</td>
+              <td>{{ item.status }}</td>
+            </tr>
+            {% endfor %}
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Message if no match -->
+      <p id="noResults" style="display: none; text-align: center; margin-top: 20px; color: gray;">No results found.</p>
+    </div>
+</section>
+
+<!-- ✨ JavaScript for live search -->
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const table = document.getElementById('attendanceTable');
+        const rows = table.getElementsByTagName('tr');
+        const noResults = document.getElementById('noResults');
+        let foundAnyRow = false;
+        let currentDateSeparator = null;
+        let dateHasVisibleRow = false;
+    
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+    
+            if (row.parentElement.tagName === 'THEAD') {
+                row.style.display = '';
+                continue;
+            }
+    
+            if (row.classList.contains('date-separator')) {
+                if (currentDateSeparator && !dateHasVisibleRow) {
+                    currentDateSeparator.style.display = 'none';
+                }
+                currentDateSeparator = row;
+                dateHasVisibleRow = false;
+                row.style.display = '';
+                continue;
+            }
+    
+            const cells = row.getElementsByTagName('td');
+            let rowMatch = false;
+    
+            for (let j = 0; j < cells.length; j++) {
+                const cell = cells[j];
+                if (cell.innerText.toLowerCase().includes(searchValue)) {
+                    rowMatch = true;
+                    break;
+                }
+            }
+    
+            if (rowMatch) {
+                row.style.display = '';
+                foundAnyRow = true;
+                dateHasVisibleRow = true;
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    
+        // After last date group
+        if (currentDateSeparator && !dateHasVisibleRow) {
+            currentDateSeparator.style.display = 'none';
+        }
+    
+        if (!foundAnyRow) {
+            noResults.innerText = `No results found for "${searchValue}"`;
+            noResults.style.display = 'block';
+            noResults.style.opacity = '0';
+            setTimeout(() => {
+                noResults.style.opacity = '1';
+                noResults.style.transition = 'opacity 0.5s';
+            }, 50);
+        } else {
+    noResults.style.display = 'none';
+}
+
+    });
+    </script>
+    
+
+{% endblock %}

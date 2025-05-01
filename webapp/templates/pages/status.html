@@ -1,0 +1,250 @@
+{% extends 'pages/index.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="logo">
+        <img src="{% static 'image/fingerprint-scan.png' %}" alt="logo">
+        <h3>OMSUFB</h3>
+    </div>
+    <div class="nav-links">
+        <a href="{% url 'landing_page' %}">Get Back</a>
+        
+        <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Others
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'news' %}">News</a></li>
+                <li><a class="dropdown-item" href="{% url 'org_chart' %}">Org Chart</a></li>
+                <li><a class="dropdown-item" href="{% url 'status' %}">Status</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</nav>
+
+<!-- Status Container -->
+<div class="status-container">
+    <h2 style="justify-content: center; text-align: center">Instructor Whereabouts</h2>
+    <table class="status-table">
+        <thead>
+            <tr>
+                <th>ID Number</th>
+                <th>Name</th>
+                {% for code, label in whereabouts_choices.items %}
+                    <th>{{ label }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
+            <tr>
+                <td>{{ employee.idNum }}</td>
+                <td>{{ employee.first_name }} {{ employee.last_name }}</td>
+                {% for code, label in whereabouts_choices.items %}
+                    <td>
+                        <div class="status-cell {% if employee.whereabouts == code %}active{% endif %}"
+                             data-employee-id="{{ employee.id }}"
+                             data-whereabouts="{{ code }}">
+                            ⬤
+                        </div>
+                    </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+/* Navbar Styles */
+body, html {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #e4f6de;
+}
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #508D4E;
+    padding: 10px 20px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    height: 10vh;
+}
+
+.navbar .logo {
+    display: flex;
+    align-items: center;
+}
+
+.navbar .logo img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.navbar .logo h3 {
+    color: rgb(0, 0, 0);
+    margin: 0;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* This makes sure the nav-links are aligned to the right */
+}
+
+.nav-links a {
+    color: rgb(0, 0, 0);
+    margin-left: 20px;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+/* Adjust the positioning of the dropdown menu */
+.nav-links .dropdown .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 35px; /* Adjusted from 100% to 35px for better alignment */
+    left: -30px;
+    background-color: #508D4E;
+    width: 180px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    padding: 0;
+
+}
+
+li.nav-item.dropdown{
+    margin-top: -23px;
+}
+
+.nav-links .dropdown-menu a {
+    color: white;
+    padding: 15px 20px;
+    text-decoration: none;
+    font-size: 18px;
+    display: block;
+}
+
+.nav-links .dropdown-menu a:hover {
+    background-color: #9cb898;
+    border-radius: 5px;
+}
+
+.nav-links .dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Adjust body padding to account for fixed navbar */
+body {
+    margin-top: 80px; /* Add margin to prevent content from being hidden under the navbar */
+}
+
+/* Status Container Styles */
+.status-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.status-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.status-table th,
+.status-table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.status-table th {
+    background-color: #f5f5f5;
+}
+
+.status-cell {
+    cursor: pointer;
+    color: #ddd;
+    transition: color 0.3s;
+}
+
+.status-cell:hover {
+    color: #666;
+}
+
+.status-cell.active {
+    color: #4CAF50;
+}
+
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cells = document.querySelectorAll('.status-cell');
+    
+    cells.forEach(cell => {
+        cell.addEventListener('click', function() {
+            const employeeId = this.dataset.employeeId;
+            const whereabouts = this.dataset.whereabouts;
+            
+            // Remove active class from all cells in the same row
+            const row = this.closest('tr');
+            row.querySelectorAll('.status-cell').forEach(cell => {
+                cell.classList.remove('active');
+            });
+            
+            // Add active class to clicked cell
+            this.classList.add('active');
+            
+            // Send update to server
+            fetch('{% url "update_whereabouts" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: `employee_id=${employeeId}&whereabouts=${whereabouts}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status !== 'success') {
+                    console.error('Update failed:', data.message);
+                }
+            });
+        });
+    });
+    
+    // Function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+</script>
+{% endblock %}

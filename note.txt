@@ -1,0 +1,30 @@
+Logo sa Navbar:
+ 	palitan ng logo katulad sa sidebar
+
+NavLink:
+	lagyan ng dropdown yung link sa Landiong page News, Orgchart, Status
+
+Functions Landing Page:
+	may functions na tas may these are the functions pa, tanggalin na lang yung Malaki 
+
+Footer:
+	paayos ng footer, tanggalin mga di kailangan na link o mag add ng mga kailangan 
+
+Backgroud Color landing Page:
+	gawing green na lahat ng bg color 
+
+About page Description:
+	dipa ayos nakasulat
+Comlab Page:
+	CRUD Comlab Pic para pwede iedit o palitan ng ibang pic sa admin domain, date and 	time sa pag hiram ng equipment di pa ayos 
+
+INSTRUCTORS DOMAIN.
+
+Profile Page: Info
+	paayos ng design o palitan ng design, lagyan din function yung edit button para 	ma edit yung info
+OrgChart:
+	kaialngan connected sa Employee table para makuha yung data na diretcho sa 	orgchart
+
+INST?ADMIN DOMAIN.
+Create Post:
+	Gawing White Background 

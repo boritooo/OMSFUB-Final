@@ -1,0 +1,73 @@
+{% extends 'pages/index.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/landingpage.css' %}">
+<style>
+  html,body{
+    overflow: hidden;
+  }
+  .role-selection-container {
+    display: flex;
+    flex-direction: column; /* Align cards vertically */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+  }
+
+  .role-card {
+    background-color: white;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 200px;
+  }
+
+  .role-card a {
+    display: block;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #508D4E;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+  }
+
+  .role-card a:hover {
+    background-color:  #21d01b;
+  }
+</style>
+
+<nav class="navbar">
+  <div class="logo">
+    <img src="{% static 'image/fingerprint-scan.png' %}" alt="logo">
+    <h3>OMSUFB</h3>
+  </div>
+  <div class="nav-links">
+    <a href="{% url 'landing_page' %}">Home</a>
+    <a href="#OrgChart">News</a>
+    <a href="{%url 'studorg'%}">Org Chart</a>
+    <a href="{% url 'status' %}">Status</a>
+  </div>
+  <div class="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</nav>
+
+  <div class="role-selection-container">
+    <div class="role-card">
+      <h2>Admin</h2>
+      <a href="{% url 'adminlogin' %}">Sign In as Admin</a>
+    </div>
+    <div class="role-card">
+      <h2>Instructor</h2>
+      <a href="{% url 'user-login' %}">Sign In as Instructor</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
